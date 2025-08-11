@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
-import { Input } from '../input';  // твой кастомный input
+import { Input } from '../input';  
 import { useNavigate } from 'react-router-dom';
 
 const courses = ['Computer Science', 'Math', 'Physics'];
-const statuses = ['Pending', 'In Progress', 'Completed'];
 const taskStatuses = ['To Do', 'Doing', 'Done'];
+
 
 const Form = ({ defaultValues = {}, index }) => {
   const navigate = useNavigate();
@@ -24,6 +24,21 @@ const Form = ({ defaultValues = {}, index }) => {
     ],
   });
 
+  const [defaultState, setDefaultState] = useState({
+    name: 'John',
+    surname: 'Doe',
+    course: '1',
+    subject: 'Math',
+    group: '1/11',
+    email: 'john.doe@email.com',
+    hasExtra: 'yes', 
+    extraSelect: 'Core subject',
+    extraText: 'Dyploma',
+    projects: [
+        { name: 'Write a chapter', status: 'To do' }
+    ],
+  });
+
   useEffect(() => {
     if (defaultValues) {
       setFormState(defaultValues);
@@ -34,7 +49,7 @@ const Form = ({ defaultValues = {}, index }) => {
 
   const handleChange = (field) => (value) => {
     setFormState(prev => ({ ...prev, [field]: value }));
-    changedFields.current.add(field);
+    changedFields.current.add(field); 
   };
 
 
@@ -47,12 +62,15 @@ const Form = ({ defaultValues = {}, index }) => {
     changedFields.current.add('projects');
   };
 
+
   const addProject = () => {
     setFormState(prev => ({
       ...prev,
       projects: [...prev.projects, { name: '', status: '' }],
     }));
   };
+
+
 
   const removeProject = (index) => {
     setFormState(prev => {
@@ -61,19 +79,25 @@ const Form = ({ defaultValues = {}, index }) => {
     });
   };
 
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const payload = {};
-    changedFields.current.forEach(field => {
-      if (field === 'projects') {
-        payload.projects = formState.projects;
-      } else if (formState[field] !== '') {
-        payload[field] = formState[field];
-      }
-    });
 
-    if (index !== undefined) {
+    if (index === undefined) {
+      changedFields.current.forEach(field => {
+        if (formState[field] !== '') {
+          payload[field] = formState[field];
+        } else if (formState[field] == '') {
+          payload[field] = defaultState[field];
+        }
+      });
+    } else {
+      changedFields.current.forEach(field => {
+        payload[field] = formState[field];
+      });
       payload.index = index;
     }
 
@@ -91,9 +115,10 @@ const Form = ({ defaultValues = {}, index }) => {
     }
   };
 
+
+
   return (
     <form onSubmit={handleSubmit}>
-
       <Input id="name" placeholder="Name" value={formState.name} onChange={handleChange('name')} />
       <Input id="surname" placeholder="Surname" value={formState.surname} onChange={handleChange('surname')} />
       <Input id="subject" placeholder="Subject" value={formState.subject} onChange={handleChange('subject')} />
@@ -121,30 +146,28 @@ const Form = ({ defaultValues = {}, index }) => {
       <fieldset className='fieldset'>
         <legend className='label'>Additional info?</legend>
 
-         <div className="radio-group">
-        <label className='label'>
-          <input
-            type="radio"
-            name="hasExtra"
-            value="no"
-            checked={formState.hasExtra === 'no'}
-            onChange={e => handleChange('hasExtra')(e.target.value)}
-          />
-          No
-        </label>
-        <label className='label'>
-          <input
-            type="radio"
-            name="hasExtra"
-            value="yes"
-            checked={formState.hasExtra === 'yes'}
-            onChange={e => handleChange('hasExtra')(e.target.value)}
-          />
-          Yes
-        </label>
+        <div className="radio-group">
+          <label className='label'>
+            <input
+              type="radio"
+              name="hasExtra"
+              value="no"
+              checked={formState.hasExtra === 'no'}
+              onChange={e => handleChange('hasExtra')(e.target.value)}
+            />
+            No
+          </label>
+          <label className='label'>
+            <input
+              type="radio"
+              name="hasExtra"
+              value="yes"
+              checked={formState.hasExtra === 'yes'}
+              onChange={e => handleChange('hasExtra')(e.target.value)}
+            />
+            Yes
+          </label>
         </div>
-
-        
 
         {formState.hasExtra === 'yes' && (
           <>
@@ -152,8 +175,7 @@ const Form = ({ defaultValues = {}, index }) => {
               Extra Select:
               <select value={formState.extraSelect} onChange={e => handleChange('extraSelect')(e.target.value)}>
                 <option value="">Core subject</option>
-                <option value="option1">Core subject</option>
-                <option value="option2">Standart subject</option>
+                <option value="option1">Standart subject</option>
               </select>
             </label>
             <Input id="comments" placeholder="Comments" value={formState.extraText} onChange={handleChange('extraText')} />

@@ -14,6 +14,12 @@ let entities = [
         subject: 'Math',
         group: '1/11',
         email: 'john.doe@email.com',
+        hasExtra: 'yes', 
+        extraSelect: 'Core subject',
+        extraText: 'Dyploma',
+        projects: [
+            { name: 'Write a chapter', status: 'To do' }
+        ],
     }
 ];
 
@@ -31,7 +37,7 @@ app.post('/api/enroll', (req, res) => {
         });
         return res.json({ message: 'Entity updated', entity: entities[idx] });
         } else {
-        return res.status(404).json({ message: 'Entity not found' });
+            return res.status(404).json({ message: 'Entity not found' });
         }
     }
 
