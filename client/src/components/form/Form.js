@@ -1,9 +1,21 @@
 import { useState, useRef, useEffect } from 'react';
 import { Input } from '../input';  
 import { useNavigate } from 'react-router-dom';
+import * as yup from 'yup';
+
 
 const courses = ['Computer Science', 'Math', 'Physics'];
 const taskStatuses = ['To Do', 'Doing', 'Done'];
+
+
+const validation = yup.object().shape({
+  name: yup.string().required('Name is required'),
+  surname: yup.string().max(20, 'Surname must be at most 20 characters'),
+  course: yup.string().required('Course is required'),
+  subject: yup.string(),
+  email: yup.string().email('Invalid email'),
+});
+
 
 
 const Form = ({ defaultValues = {}, index }) => {
@@ -38,6 +50,8 @@ const Form = ({ defaultValues = {}, index }) => {
         { name: 'Write a chapter', status: 'To do' }
     ],
   });
+
+  const [errors, setErrors] = useState({});
 
   useEffect(() => {
     if (defaultValues) {
@@ -84,34 +98,48 @@ const Form = ({ defaultValues = {}, index }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const payload = {};
+    try {
+      setErrors({});
+      await validation.validate(formState, { abortEarly: false });
 
-    if (index === undefined) {
-      changedFields.current.forEach(field => {
-        if (formState[field] !== '') {
+      const payload = {};
+
+      if (index === undefined) {
+        changedFields.current.forEach(field => {
+          if (formState[field] !== '') {
+            payload[field] = formState[field];
+          } else if (formState[field] == '') {
+            payload[field] = defaultState[field];
+          }
+        });
+      } else {
+        changedFields.current.forEach(field => {
           payload[field] = formState[field];
-        } else if (formState[field] == '') {
-          payload[field] = defaultState[field];
-        }
-      });
-    } else {
-      changedFields.current.forEach(field => {
-        payload[field] = formState[field];
-      });
-      payload.index = index;
-    }
+        });
+        payload.index = index;
+      }
 
-    const response = await fetch('http://localhost:5000/api/enroll', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+      const response = await fetch('http://localhost:5000/api/enroll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
 
-    if (response.ok) {
-      changedFields.current.clear();
-      navigate('/');
-    } else {
-      alert('Error data sending');
+      if (response.ok) {
+        changedFields.current.clear();
+        navigate('/');
+      } else {
+        alert('Error data sending');
+      }
+
+    } catch (err) {
+      if (err.inner) {
+        const formErrors = {};
+        err.inner.forEach(e => {
+          formErrors[e.path] = e.message;
+        });
+        setErrors(formErrors);
+      }
     }
   };
 
@@ -120,17 +148,24 @@ const Form = ({ defaultValues = {}, index }) => {
   return (
     <form onSubmit={handleSubmit}>
       <Input id="name" placeholder="Name" value={formState.name} onChange={handleChange('name')} />
+      {errors.name && <div style={{color: 'red', fontSize: '10px'}}>{errors.name}</div>}
       <Input id="surname" placeholder="Surname" value={formState.surname} onChange={handleChange('surname')} />
+      {errors.surname && <div style={{color: 'red', fontSize: '10px'}}>{errors.surname}</div>}
       <Input id="subject" placeholder="Subject" value={formState.subject} onChange={handleChange('subject')} />
+      {errors.subject && <div style={{color: 'red', fontSize: '10px'}}>{errors.subject}</div>}
       <Input id="email" placeholder="Email" value={formState.email} onChange={handleChange('email')} />
+      {errors.email && <div style={{color: 'red', fontSize: '10px'}}>{errors.email}</div>}
 
-      <label className='label'>
-        Course*:
-        <select value={formState.course} onChange={e => handleChange('course')(e.target.value)}>
-          <option value="">Select course</option>
-          {courses.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
-      </label>
+      <div className='course'> 
+        <label className='label'>
+          Course*:
+          <select value={formState.course} onChange={e => handleChange('course')(e.target.value)}>
+            <option value="">Select course</option>
+            {courses.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+        </label>
+        {errors.course && <div style={{color: 'red', fontSize: '10px'}}>{errors.course}</div>}
+      </div>
 
       <label className='label'>
         Group (optional):
@@ -141,6 +176,7 @@ const Form = ({ defaultValues = {}, index }) => {
           <option value="3/33">3/33</option>
         </select>
       </label>
+
 
 
       <fieldset className='fieldset'>
