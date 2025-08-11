@@ -5,9 +5,115 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+    background-color: rgb(247, 226, 168);
+    margin-top: 100px;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+
+.input {
+  width: 20%;
+  height: 20px;
+  border-radius: 2px;
+  margin: 10px 10px;
+  border: none;
+  font-size: 8.5px;
+  padding-left: 5px;
+}
+
+.input:focus, select:focus {
+  outline: 0.5px solid rgb(148, 147, 147);
+}
+
+
+h1 {
+  font-size: 22px;
+}
+
+
+.table {
+  font-size: 10px;
+  padding: 10px 3rem;
+}
+
+th, td {
+  padding: 0 10px;
+}
+
+select {
+  width: 20%;
+  height: 20px;
+  border-radius: 2px;
+  margin: 10px 10px;
+  border: none;
+  font-size: 8.5px;
+  padding-left: 5px;
+}
+
+
+.radio-group {
+  grid-column: 1 / -1;
+}
+
+
+.projects-container {
+  grid-column: 1 / 3;
+  border: 1px solid #f19924;
+  padding: 10px;
+  border-radius: 6px;
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: 10px;
+}
+
+
+.button {
+  justify-self: start; 
+  padding: 8px 16px;
+  cursor: pointer;
+  background-color: chocolate;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-top: 12px;
+  font-size: 8.5px;
+  margin-bottom: 20px;
+}
+
+.form {
+  font-size: 10px;
+}
+
+
+.button-change {
+  justify-self: start; 
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: chocolate;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  margin-top: 12px;
+  font-size: 6px;
+}
+
+
+.label {
+  font-size: 10px;
+}
+
+.fieldset {
+  grid-column: 1 / -1;
+  border: 1px solid chocolate;
+  border-radius: 5px;
+  margin: 30px 60px;
+}
+
+.course {
+  grid-column: 1 / -1;
 }
