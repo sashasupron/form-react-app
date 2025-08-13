@@ -45,7 +45,7 @@ th, td {
 }
 
 select {
-  width: 20%;
+  width: 21%;
   height: 20px;
   border-radius: 2px;
   margin: 10px 10px;
@@ -55,9 +55,6 @@ select {
 }
 
 
-.radio-group {
-  grid-column: 1 / -1;
-}
 
 
 .projects-container {
@@ -84,10 +81,6 @@ select {
   margin-bottom: 20px;
 }
 
-.form {
-  font-size: 10px;
-}
-
 
 .button-change {
   justify-self: start; 
@@ -102,18 +95,13 @@ select {
   font-size: 6px;
 }
 
-
-.label {
-  font-size: 10px;
-}
-
-.fieldset {
+fieldset {
   grid-column: 1 / -1;
   border: 1px solid chocolate;
   border-radius: 5px;
-  margin: 30px 60px;
-}
+  font-size: 12px;
+  margin-top: 30px;
+  margin-left: 20px;
+  margin-right: 20px;
 
-.course {
-  grid-column: 1 / -1;
 }
